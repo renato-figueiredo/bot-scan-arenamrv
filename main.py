@@ -2,6 +2,8 @@
 
 # Importar bibliotecas e configurações
 from bs4 import BeautifulSoup
+from queue import Queue 
+
 import requests
 import datetime
 from telegram import Bot, Update
@@ -63,7 +65,10 @@ def handle_teste(update: Update, context):
 
 def main():
     """Inicializa o bot e configura os handlers."""
-    updater = Updater(token=config.BOT_TOKEN, use_context=True)
+    bot = Bot(token=config.BOT_TOKEN)  # Crie um objeto Bot
+    update_queue = Queue()  # Crie uma fila para atualizações
+    updater = Updater(bot=bot, update_queue=update_queue)  # Passe a fila para o Updater
+
     dispatcher = updater.dispatcher
 
     # Adicionar handlers para comandos
@@ -71,6 +76,9 @@ def main():
     dispatcher.add_handler(CommandHandler("arena", handle_arena))
     dispatcher.add_handler(CommandHandler("teste", handle_teste))
 
+    # Executar handlers de forma assíncrona 
+    dispatcher.run_async
+    
     # Iniciar o bot
     updater.start_polling()
     updater.idle()
